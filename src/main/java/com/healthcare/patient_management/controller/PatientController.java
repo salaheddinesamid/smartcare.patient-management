@@ -2,10 +2,8 @@ package com.healthcare.patient_management.controller;
 
 import com.healthcare.patient_management.dto.ApiResponse;
 import com.healthcare.patient_management.dto.NewPatientResponse;
-import com.healthcare.patient_management.dto.NewUserRequestDto;
 import com.healthcare.patient_management.dto.PatientRequest;
 import com.healthcare.patient_management.service.implementation.PatientServiceImpl;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
