@@ -1,9 +1,6 @@
 package com.healthcare.patient_management.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +13,17 @@ public class Patient {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer patientId;
 
+    @Column(name = "user_id")
+    private Integer userId;
 
+    @Column(name = "national_id")
+    private String nationalId;
+
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private PatientStatus status;
 }
 
