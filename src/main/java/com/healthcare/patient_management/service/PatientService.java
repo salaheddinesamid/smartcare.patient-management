@@ -2,6 +2,9 @@ package com.healthcare.patient_management.service;
 
 import com.healthcare.patient_management.dto.NewPatientResponse;
 import com.healthcare.patient_management.dto.PatientRequest;
+import com.healthcare.patient_management.dto.PatientResponseDto;
+
+import java.util.List;
 
 public interface PatientService {
 
@@ -18,4 +21,10 @@ public interface PatientService {
      * @return
      */
     Boolean verifyPatientExistence(String nationalId);
+
+    /**
+     * This method retrieves all the existing patients in the system
+     * @return
+     */
+    List<PatientResponseDto> getAllPatients();
 }

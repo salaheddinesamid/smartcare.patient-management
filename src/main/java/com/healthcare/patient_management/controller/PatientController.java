@@ -3,11 +3,14 @@ package com.healthcare.patient_management.controller;
 import com.healthcare.patient_management.dto.ApiResponse;
 import com.healthcare.patient_management.dto.NewPatientResponse;
 import com.healthcare.patient_management.dto.PatientRequest;
+import com.healthcare.patient_management.dto.PatientResponseDto;
 import com.healthcare.patient_management.service.implementation.PatientServiceImpl;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/patient-management")
@@ -32,6 +35,20 @@ public class PatientController {
 
         return ResponseEntity
                 .status(200)
+                .body(response);
+    }
+
+    @GetMapping("get_all")
+    public ResponseEntity<ApiResponse<?>> getAll(){
+
+        List<PatientResponseDto> patients = patientService.getAllPatients();
+
+        ApiResponse<List<PatientResponseDto>> response = new ApiResponse<>(
+                true,
+                "",
+                patients
+        );
+        return ResponseEntity.status(200)
                 .body(response);
     }
 
