@@ -66,6 +66,12 @@ public class PatientServiceImpl implements PatientService {
 
     }
 
+    @Override
+    public Boolean verifyPatientExistence(String nationalId) {
+        return
+                patientRepository.existsByNationalId(nationalId);
+    }
+
     public NewUserResponseDto createUser(NewUserRequestDto newUserRequestDto){
 
         String uri = USER_MANAGEMENT_URI + "/api/user/new";

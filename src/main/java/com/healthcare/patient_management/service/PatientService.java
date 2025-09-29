@@ -11,4 +11,11 @@ public interface PatientService {
      * @return a response
      */
     NewPatientResponse newPatient(PatientRequest patientRequest);
+
+    /**
+     * This method is used to verify whether a specific patient exists in the system or not
+     * @param nationalId
+     * @return
+     */
+    Boolean verifyPatientExistence(String nationalId);
 }

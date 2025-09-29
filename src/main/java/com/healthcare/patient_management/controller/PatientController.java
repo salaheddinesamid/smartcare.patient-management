@@ -4,12 +4,10 @@ import com.healthcare.patient_management.dto.ApiResponse;
 import com.healthcare.patient_management.dto.NewPatientResponse;
 import com.healthcare.patient_management.dto.PatientRequest;
 import com.healthcare.patient_management.service.implementation.PatientServiceImpl;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/patient-management")
@@ -34,6 +32,19 @@ public class PatientController {
 
         return ResponseEntity
                 .status(200)
+                .body(response);
+    }
+
+    @GetMapping("verify-existence")
+    public ResponseEntity<ApiResponse<?>> verifyPatient(@RequestParam String nationalId){
+
+        boolean patientExists = patientService.verifyPatientExistence(nationalId);
+        ApiResponse<Boolean> response = new ApiResponse<>(
+                true,
+                "",
+                patientExists
+        );
+        return ResponseEntity.status(200)
                 .body(response);
     }
 }
