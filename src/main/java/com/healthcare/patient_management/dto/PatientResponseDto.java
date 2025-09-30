@@ -18,6 +18,7 @@ public class PatientResponseDto {
     private String status;
 
     public PatientResponseDto(Patient patient, UserDto user){
+        this.userId = user.getUserId();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.email = user.getEmail();

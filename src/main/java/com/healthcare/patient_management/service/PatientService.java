@@ -27,4 +27,11 @@ public interface PatientService {
      * @return
      */
     List<PatientResponseDto> getAllPatients();
+
+
+    /**
+     * This function fetch a list of specific patients by ids
+     * @return
+     */
+    List<PatientResponseDto> getPatients(List<Integer> ids);
 }

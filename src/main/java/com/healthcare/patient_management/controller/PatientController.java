@@ -5,7 +5,6 @@ import com.healthcare.patient_management.dto.NewPatientResponse;
 import com.healthcare.patient_management.dto.PatientRequest;
 import com.healthcare.patient_management.dto.PatientResponseDto;
 import com.healthcare.patient_management.service.implementation.PatientServiceImpl;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -63,5 +62,19 @@ public class PatientController {
         );
         return ResponseEntity.status(200)
                 .body(response);
+    }
+
+    @PostMapping("get-patients")
+    public ResponseEntity<ApiResponse<?>> getPatients(@RequestBody List<Integer> ids){
+        List<PatientResponseDto> patients = patientService.getPatients(ids);
+
+        ApiResponse<?> response = new ApiResponse<>(
+                true,
+                "",
+                patients
+        );
+
+        return ResponseEntity
+                .ok().body(response);
     }
 }
