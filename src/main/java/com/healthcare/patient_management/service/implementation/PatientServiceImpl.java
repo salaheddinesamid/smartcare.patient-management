@@ -7,12 +7,12 @@ import com.healthcare.patient_management.model.PatientStatus;
 import com.healthcare.patient_management.repository.PatientRepository;
 import com.healthcare.patient_management.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.lang.reflect.Type;
+import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -30,6 +30,7 @@ public class PatientServiceImpl implements PatientService {
         this.patientRepository = patientRepository;
         this.restTemplate = restTemplate;
     }
+
 
     @Override
     public NewPatientResponse newPatient(PatientRequest patientRequest) {
@@ -119,8 +120,7 @@ public class PatientServiceImpl implements PatientService {
                         uri,
                         HttpMethod.POST,
                         entity,
-                        new ParameterizedTypeReference<ApiResponse<List<UserDto>>>() {
-                        }
+                        new ParameterizedTypeReference<>() {}
                 );
 
         return response.getBody().getData();
@@ -137,8 +137,7 @@ public class PatientServiceImpl implements PatientService {
                         uri,
                         HttpMethod.POST,
                         entity,
-                        new ParameterizedTypeReference<ApiResponse<NewUserResponseDto>>() {
-                        }
+                        new ParameterizedTypeReference<>() {}
                 );
 
         return response.getBody().getData();
