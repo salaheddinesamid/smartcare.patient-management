@@ -34,4 +34,10 @@ public interface PatientService {
      * @return
      */
     List<PatientResponseDto> getPatients(List<Integer> ids);
+
+    /**
+     *
+     */
+
+    PatientResponseDto getPatient(Integer id);
 }

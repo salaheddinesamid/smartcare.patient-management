@@ -108,6 +108,11 @@ public class PatientServiceImpl implements PatientService {
                         .toList();
     }
 
+    @Override
+    public PatientResponseDto getPatient(Integer id) {
+        return null;
+    }
+
     private List<UserDto> getUsers(List<Integer> ids){
         String uri = USER_MANAGEMENT_URI + "/api/user/get-users";
         HttpHeaders headers = new HttpHeaders();

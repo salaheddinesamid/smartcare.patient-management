@@ -77,4 +77,9 @@ public class PatientController {
         return ResponseEntity
                 .ok().body(response);
     }
+
+    @GetMapping("get")
+    public ResponseEntity<ApiResponse<?>> fetchPatient(@RequestParam Integer patientId){
+
+    }
 }
