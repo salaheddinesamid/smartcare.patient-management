@@ -45,7 +45,7 @@ public interface PatientService {
     /**
      * This function returns a list of patients that matches the name
      * @param name
-     * @return
+     * @return a list of users that closely match a patient's national ID
      */
-    PatientSearchResponseDto searchPatients(String name);
+    List<PatientSearchResponseDto> searchPatients(String name);
 }

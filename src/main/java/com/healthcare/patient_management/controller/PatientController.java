@@ -84,7 +84,8 @@ public class PatientController {
     }
 
     @GetMapping("search")
-    public ResponseEntity<ApiResponse<?>> searchPatients(@RequestParam String name){
-        return null;
+    public ResponseEntity<?> searchPatients(@RequestParam String nationalId){
+        return ResponseEntity.status(200)
+                .body(patientService.searchPatients(nationalId));
     }
 }

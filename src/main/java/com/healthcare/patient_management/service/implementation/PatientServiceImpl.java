@@ -80,9 +80,7 @@ public class PatientServiceImpl implements PatientService {
         List<Patient> patients = patientRepository.findAll();
 
         // Get user ids:
-        List<Integer> ids = patients
-                .stream().map(Patient::getUserId)
-                .toList();
+        List<Integer> ids = getUserIds(patients);
 
         // Get users:
         List<UserDto> users = getUsers(ids);
@@ -150,10 +148,31 @@ public class PatientServiceImpl implements PatientService {
 
 
     @Override
-    public PatientSearchResponseDto searchPatients(String name) {
-
+    public List<PatientSearchResponseDto> searchPatients(String nationalId) {
         List<Patient> patients =
-                patientRepository.findAll();
-        return null;
+                patientRepository.findAllByNationalId(nationalId);
+
+        List<Integer> userIds = getUserIds(patients);
+
+        List<UserDto> users = getUsers(userIds);
+
+        // Map for quick look up:
+        Map<Integer,UserDto> usersMap = users.stream()
+                .collect(Collectors.toMap(UserDto::getUserId, u-> u));
+
+
+        return patients.stream()
+                .map(patient -> {
+                    UserDto userDto = usersMap.get(patient.getUserId());
+                    return new PatientSearchResponseDto(
+                            patient,
+                            userDto
+                    );
+                }).toList();
+    }
+
+    private List<Integer> getUserIds(List<Patient> patients){
+        return patients.stream()
+                .map(Patient::getUserId).toList();
     }
 }
