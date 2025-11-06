@@ -3,6 +3,7 @@ package com.healthcare.patient_management.service;
 import com.healthcare.patient_management.dto.NewPatientResponse;
 import com.healthcare.patient_management.dto.PatientRequest;
 import com.healthcare.patient_management.dto.PatientResponseDto;
+import com.healthcare.patient_management.dto.PatientSearchResponseDto;
 
 import java.util.List;
 
@@ -40,4 +41,11 @@ public interface PatientService {
      */
 
     PatientResponseDto getPatient(Integer id);
+
+    /**
+     * This function returns a list of patients that matches the name
+     * @param name
+     * @return
+     */
+    PatientSearchResponseDto searchPatients(String name);
 }

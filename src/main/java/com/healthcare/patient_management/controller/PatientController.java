@@ -80,6 +80,11 @@ public class PatientController {
 
     @GetMapping("get")
     public ResponseEntity<ApiResponse<?>> fetchPatient(@RequestParam Integer patientId){
+        return null;
+    }
 
+    @GetMapping("search")
+    public ResponseEntity<ApiResponse<?>> searchPatients(@RequestParam String name){
+        return null;
     }
 }

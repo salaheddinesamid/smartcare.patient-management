@@ -147,4 +147,13 @@ public class PatientServiceImpl implements PatientService {
 
         return response.getBody().getData();
     }
+
+
+    @Override
+    public PatientSearchResponseDto searchPatients(String name) {
+
+        List<Patient> patients =
+                patientRepository.findAll();
+        return null;
+    }
 }
