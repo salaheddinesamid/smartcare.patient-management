@@ -1,13 +1,9 @@
 package com.healthcare.patient_management.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+
 
 @Data
-@RequiredArgsConstructor
-@NoArgsConstructor
 public class PatientRequest {
 
     private String firstName;
