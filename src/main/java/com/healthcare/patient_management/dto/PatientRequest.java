@@ -12,6 +12,7 @@ public class PatientRequest {
     private String roleName;
     private String nationalId;
     private String address;
+    private Integer age;
     private String password;
 
     public PatientRequest(

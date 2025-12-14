@@ -19,6 +19,9 @@ public class Patient {
     @Column(name = "national_id")
     private String nationalId;
 
+    @Column(name = "age", columnDefinition = "integer default null")
+    private Integer age;
+
     @Column(name = "address")
     private String address;
 
