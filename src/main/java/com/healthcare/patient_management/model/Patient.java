@@ -22,7 +22,7 @@ public class Patient {
     @Column(name = "age", columnDefinition = "integer default null")
     private Integer age;
 
-    @Column(name = "address")
+    @Column(name = "addrtess")
     private String address;
 
     @Column(name = "status")
