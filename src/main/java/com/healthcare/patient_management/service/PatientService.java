@@ -23,29 +23,6 @@ public interface PatientService {
      */
     Boolean verifyPatientExistence(String nationalId);
 
-    /**
-     * This method retrieves all the existing patients in the system
-     * @return
-     */
-    List<PatientResponseDto> getAllPatients();
 
 
-    /**
-     * This function fetch a list of specific patients by ids
-     * @return
-     */
-    List<PatientResponseDto> getPatients(List<Integer> ids);
-
-    /**
-     *
-     */
-
-    PatientResponseDto getPatient(Integer id);
-
-    /**
-     * This function returns a list of patients that matches the name
-     * @param name
-     * @return a list of users that closely match a patient's national ID
-     */
-    List<PatientSearchResponseDto> searchPatients(String name);
 }
