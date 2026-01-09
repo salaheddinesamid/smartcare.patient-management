@@ -4,6 +4,7 @@ import com.healthcare.patient_management.dto.ApiResponse;
 import com.healthcare.patient_management.dto.NewPatientResponse;
 import com.healthcare.patient_management.dto.PatientRequest;
 import com.healthcare.patient_management.dto.PatientResponseDto;
+import com.healthcare.patient_management.service.implementation.PatientQueryServiceImpl;
 import com.healthcare.patient_management.service.implementation.PatientServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +17,12 @@ import java.util.List;
 public class PatientController {
 
     private final PatientServiceImpl patientService;
+    private final PatientQueryServiceImpl patientQueryService;
 
     @Autowired
-    public PatientController(PatientServiceImpl patientService) {
+    public PatientController(PatientServiceImpl patientService, PatientQueryServiceImpl patientQueryService) {
         this.patientService = patientService;
+        this.patientQueryService = patientQueryService;
     }
 
     @PostMapping("new")
@@ -40,7 +43,7 @@ public class PatientController {
     @GetMapping("get_all")
     public ResponseEntity<ApiResponse<?>> getAll(){
 
-        List<PatientResponseDto> patients = patientService.getAllPatients();
+        List<PatientResponseDto> patients = patientQueryService.getAllPatients();
 
         ApiResponse<List<PatientResponseDto>> response = new ApiResponse<>(
                 true,
@@ -66,7 +69,7 @@ public class PatientController {
 
     @PostMapping("get-patients")
     public ResponseEntity<ApiResponse<?>> getPatients(@RequestBody List<Integer> ids){
-        List<PatientResponseDto> patients = patientService.getPatients(ids);
+        List<PatientResponseDto> patients = patientQueryService.getPatients(ids);
 
         ApiResponse<?> response = new ApiResponse<>(
                 true,
@@ -86,6 +89,6 @@ public class PatientController {
     @GetMapping("search")
     public ResponseEntity<?> searchPatients(@RequestParam String nationalId){
         return ResponseEntity.status(200)
-                .body(patientService.searchPatients(nationalId));
+                .body(patientQueryService.searchPatients(nationalId));
     }
 }
