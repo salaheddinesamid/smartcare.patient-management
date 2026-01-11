@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: patient-management-service-deployment-prod
+  labels:
+    app: patient-management-service-deployment-prod
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: patient-management-service-deployment-prod
+  template:
+    metadata:
+      name: patient-management-service-deployment-prod
+      labels:
+        app: patient-management-service-deployment-prod
+    spec:
+      containers:
+        - name: patient-management-service-deployment-prod
+          image: smartcareacr.azure.io/patient-management-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              protocol: TCP
+      restartPolicy: Always
+      

@@ -6,19 +6,18 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Java CI with Maven
+name: CI CD Pipeline for Patient Management Service
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main" , "develop", "release"]
   pull_request:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-and-test:
 
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
@@ -27,9 +26,90 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+    # Build the Artifact for staging environment
+    - name: Build for staging
+      run: mvn clean package --spring.profiles.active=staging
+    # Build the Artifact for production environment
+    - name: Build for production
+      run: mvn clean package --spring.profile.active=prod
+    - name : Test with Maven
+      run: mvn clean test
+    # Upload staging Artifact
+    - name: Upload JAR Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: patient-management-service-staging
+        path: target
+    # Upload production Artifact
+    - name: Upload JAR production Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: patient-management-service-prod
+        path: target
+  # Build Docker Image for staging
+  build-docker-image:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    environment: staging
+    if: contains(fromJSON('["refs/heads/develop", "refs/heads/release", "refs/heads/main"]'), github.ref)
 
-    # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-    - name: Update dependency graph
-      uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download JAR Artifact
+        uses:
+          actions/download-artifact@v4
+        with:
+          name: patient-management-service
+          path: target
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Login to ACR
+        run: az acr login --name ${{ vars.ACR_LOGIN_SERVER }}
+
+      - name: Build & Push Docker Image
+        run:
+          FULL_IMAGE_NAME = ${{ vars.ACR_LOGIN_SERVER }}/${{ vars.IMAGE_NAME }}:${{ github.sha }}
+          docker build -t $FULL_IMAGE_NAME .
+          docker push $FULL_IMAGE_NAME
+
+  deploy-to-staging:
+    runs-on: ubuntu-latest
+    needs: build-docker-image
+    environment: staging
+    if: github.ref == 'refs/heads/release'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Azure Login
+        uses: azure/login@v4
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Set AKS Context
+        uses: azure/aks-set-context@v3
+        with:
+          resource-group: ${{ vars.AKS_RESOURCE_GROUP }}
+          cluster-name: ${{ vars.AKS_CLUSTER_NAME }}
+        run:
+
+  deploy-to-production:
+    runs-on: ubuntu-latest
+    environment: production
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Azure Login
+        uses: azure/login@v4
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Set AKS Context
+        uses: azure/aks-set-context@v3
+        with:
+          resource-group: ${{ vars.AKS_RESOURCE_GROUP }}
+          cluster-name: ${{ vars.AKS_CLUSTER_NAME }}
