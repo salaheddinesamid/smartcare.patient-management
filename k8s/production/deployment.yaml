@@ -17,6 +17,9 @@ spec:
     spec:
       containers:
         - name: patient-management-service-deployment-prod
+          env:
+            - name: ENV_PROFILE
+              value: prod
           image: smartcareacr.azure.io/patient-management-service:latest
           imagePullPolicy: IfNotPresent
           ports:

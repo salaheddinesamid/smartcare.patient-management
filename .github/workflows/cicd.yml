@@ -15,6 +15,7 @@ on:
     branches: [ "main" ]
 
 jobs:
+  # Job 1: Build and Test source code using Maven
   build-and-test:
 
     runs-on: ubuntu-latest
@@ -26,36 +27,29 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-    # Build the Artifact for staging environment
-    - name: Build for staging
-      run: mvn clean package --spring.profiles.active=staging
-    # Build the Artifact for production environment
-    - name: Build for production
-      run: mvn clean package --spring.profile.active=prod
-    - name : Test with Maven
-      run: mvn clean test
-    # Upload staging Artifact
+    # Build and test the Software Artifact
+    - name: Build & run tests
+      run: mvn clean package
+    # Static code Analysis
+    - name: Static Code Analysis
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: mvn sonar:sonar -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+    # Upload Software Artifact
     - name: Upload JAR Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: patient-management-service-staging
+        name: patient-management-service
         path: target
-    # Upload production Artifact
-    - name: Upload JAR production Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: patient-management-service-prod
-        path: target
-  # Build Docker Image for staging
+  # Job 2: Build and Push Docker Image
   build-docker-image:
     runs-on: ubuntu-latest
     needs: build-and-test
     environment: staging
     if: contains(fromJSON('["refs/heads/develop", "refs/heads/release", "refs/heads/main"]'), github.ref)
-
     steps:
       - uses: actions/checkout@v4
-
+      # Download the Software Artifact
       - name: Download JAR Artifact
         uses:
           actions/download-artifact@v4
@@ -71,12 +65,20 @@ jobs:
       - name: Login to ACR
         run: az acr login --name ${{ vars.ACR_LOGIN_SERVER }}
 
-      - name: Build & Push Docker Image
-        run:
-          FULL_IMAGE_NAME = ${{ vars.ACR_LOGIN_SERVER }}/${{ vars.IMAGE_NAME }}:${{ github.sha }}
+      - name: Build Docker Image
+        run: |
+          FULL_IMAGE_NAME=${{ vars.ACR_LOGIN_SERVER }}/${{ vars.IMAGE_NAME }}:${{ github.sha }}
           docker build -t $FULL_IMAGE_NAME .
           docker push $FULL_IMAGE_NAME
+      - name: Scan Docker image (Trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ vars.ACR_LOGIN_SERVER }}/${{ vars.IMAGE_NAME }}:${{ github.sha }}'
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL, HIGH'
 
+  # Job 3: Deploy to staging environment
   deploy-to-staging:
     runs-on: ubuntu-latest
     needs: build-docker-image
@@ -95,7 +97,7 @@ jobs:
         with:
           resource-group: ${{ vars.AKS_RESOURCE_GROUP }}
           cluster-name: ${{ vars.AKS_CLUSTER_NAME }}
-
+  # Job 4: Deploy to production environment with Manual Approval Gate
   deploy-to-production:
     runs-on: ubuntu-latest
     environment: production
