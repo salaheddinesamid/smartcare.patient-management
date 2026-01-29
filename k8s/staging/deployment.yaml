@@ -1,23 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: title
+  name: patient-management-deployment-staging
   labels:
-    app: title
+    app: patient-management-deployment-staging
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: title
+      app: patient-management-deployment-staging
   template:
     metadata:
-      name: title
+      name: patient-management-deployment-staging
       labels:
-        app: title
+        app: patient-management-deployment-staging
     spec:
       containers:
-        - name: title
-          image: nginx
+        - name: patient-management-deployment-staging
+          env:
+            - name: ENV_PROFILE
+              value: prod
+          image: smartcare.azure.io/patient-management-service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80

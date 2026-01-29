@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: title
+  name: patient-management-deployment-service
 spec:
   selector:
-    app: title
+    app: patient-management-deployment-staging
   ports:
     - protocol: TCP
       port: 80
