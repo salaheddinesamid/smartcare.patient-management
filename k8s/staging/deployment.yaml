@@ -19,7 +19,7 @@ spec:
         - name: patient-management-deployment-staging
           env:
             - name: ENV_PROFILE
-              value: prod
+              value: staging
           image: smartcare.azure.io/patient-management-service:latest
           imagePullPolicy: IfNotPresent
           ports:

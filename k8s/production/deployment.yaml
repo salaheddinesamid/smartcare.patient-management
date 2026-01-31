@@ -20,6 +20,8 @@ spec:
           env:
             - name: ENV_PROFILE
               value: prod
+            - name: DB_URL
+              value:
           image: smartcareacr.azure.io/patient-management-service:latest
           imagePullPolicy: IfNotPresent
           ports:

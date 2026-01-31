@@ -56,6 +56,7 @@ jobs:
         with:
           name: patient-management-service
           path: target
+      # Login to Azure Services
       - name: Azure Login
         uses: azure/login@v2
         with:
