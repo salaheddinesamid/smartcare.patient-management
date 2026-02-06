@@ -20,7 +20,17 @@ spec:
           env:
             - name: ENV_PROFILE
               value: staging
-          image: smartcare.azure.io/patient-management-service:latest
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: AZURE_DB_USERNAME
+                  name: smartcare-patient-management-secrets
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: AZURE_DB_PASSWORD
+                  name: smartcare-patient-management-secrets
+          image: smartcare.azurecr.io/smartcare-patient-service
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80

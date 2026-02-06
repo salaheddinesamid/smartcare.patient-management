@@ -33,3 +33,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+## K8s secrets
+/k8s/staging/secrets.yaml

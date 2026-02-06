@@ -30,11 +30,26 @@ jobs:
     # Build and test the Software Artifact
     - name: Build & run tests
       run: mvn clean package
-    # Static code Analysis
-    - name: Static Code Analysis
+    # Static code Analysis using SonarCloud
+    - name: Sonar Scan
+      run: |
+            - mvn org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar \
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }} \
+            -Dsonar.host.url=https://sonarcloud.io
+
+      # Apply Quality Gate:
+    - name: SonarCloud Scan & Quality Gate
+      uses: sonarsource/sonarcloud-github-action@v2
       env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: mvn sonar:sonar -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+            args: >
+              -Dsonar.projectKey= ${{ secrets.SONAR_PROJECT_KEY }}
+              -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+              -Dsonar.host.url=https://sonarcloud.io
+              -Dsonar.java.binaries=target/classes
+
     # Upload Software Artifact
     - name: Upload JAR Artifact
       uses: actions/upload-artifact@v4
@@ -99,7 +114,11 @@ jobs:
           resource-group: ${{ vars.AKS_RESOURCE_GROUP }}
           cluster-name: ${{ vars.AKS_CLUSTER_NAME }}
       - name: Deploy to AKS using Helm
-        run:
+        run: |
+          helm upgrade --install hospital-system ./charts/hospital-app \
+            --namespace staging --create-namespace \
+            --set image.repository=${{ vars.ACR_LOGIN_SERVER }}/${{ vars.IMAGE_NAME }} \
+            --set image.tag=${{ github.sha }}
   # Job 4: Deploy to production environment with Manual Approval Gate
   deploy-to-production:
     runs-on: ubuntu-latest
@@ -117,3 +136,8 @@ jobs:
         with:
           resource-group: ${{ vars.AKS_RESOURCE_GROUP }}
           cluster-name: ${{ vars.AKS_CLUSTER_NAME }}
+          manifests: |
+            k8s/production/deployment.yaml
+            k8s/production/service.yaml
+            k8s/production/secrets.yaml
+          images: '${{ vars.ACR_LOGIN_SERVER }}/${{ vars.IMAGE_NAME }}:${{ github.sha }}'
